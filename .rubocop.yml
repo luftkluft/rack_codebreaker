@@ -1,0 +1,15 @@
+require: rubocop-rspec
+
+Metrics/BlockLength:
+  Exclude:
+    - 'Gemfile'
+    - 'spec/**/*.rb'
+
+Metrics/LineLength:
+  Max: 100
+
+Documentation:
+  Enabled: false
+
+FrozenStringLiteralComment:
+  Enabled: false
