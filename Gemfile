@@ -7,6 +7,7 @@ gemspec
 gem 'codebreaker_web',
     git: 'https://github.com/luftkluft/codebreaker_web',
     branch: 'develop'
+
 gem 'i18n'
 gem 'rack'
 
