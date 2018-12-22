@@ -1,5 +1,6 @@
 require 'bundler/setup'
 require 'codebreaker'
+require 'rack/test'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
