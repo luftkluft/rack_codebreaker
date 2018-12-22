@@ -1,6 +1,6 @@
 require_relative 'codebreaker/version'
 require 'erb'
-# require 'codebreaker_web'
+require 'codebreaker_web'
 
 module Codebreaker
   class Racker
