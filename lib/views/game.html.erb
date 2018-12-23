@@ -19,7 +19,7 @@
               </div>
             </div>
             <p class="lead text-white-70">
-              Hello, test!
+              Hello, <%= @player_name %>!
               Try to guess 4-digit number, that consists of numbers in a range from 1 to 6.
             </p>
             <hr class="mb-4">
@@ -28,21 +28,21 @@
                 <button type="button" class="btn btn-primary" disabled>
                   Level:
                   <span class="badge badge-light">
-                    Simple
+                    <%= @level %>
                   </span>
                 </button>
               </div>
               <div class="col text-center button">
                 <button type="button" class="btn btn-primary" disabled>
                   Attempts:
-                  <span class="badge badge-light">4</span>
+                  <span class="badge badge-light"><%= @attempts %></span>
                 </button>
               </div>
 
               <div class="col button">
                 <button type="button" class="btn btn-primary float-right">
                   Hints:
-                  <span class="badge badge-light">1</span>
+                  <span class="badge badge-light"><%= @hints %></span>
                 </button>
               </div>
             </div>

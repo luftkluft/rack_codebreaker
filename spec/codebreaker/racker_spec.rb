@@ -10,18 +10,51 @@ RSpec.describe Codebreaker::Racker do
     Rack::Builder.parse_file('config.ru').first
   end
 
-  describe '#routs' do
-    context 'when response /' do
+  describe 'Home page' do
+    context 'with I see:' do
       let(:response) { get '/' }
       let(:path)     { File.expand_path('../lib/views/menu.html.erb', __dir__) }
+
+      before { response }
 
       it 'returns status 200 ' do
         expect(response.status).to eq 200
       end
 
-      it 'content include Codebreaker 2018' do
-        response
+      it 'Introduction message `Codebreaker 2018`' do
         expect(last_response.body).to include('Codebreaker 2018')
+      end
+
+      it 'Select with options `Difficulty`' do
+        expect(last_response.body).to include('Choose game level')
+      end
+
+      it 'Input with `Name`' do
+        expect(last_response.body).to include('placeholder="Your name"')
+      end
+
+      it 'Submit button with `Start the game!` text' do
+        expect(last_response.body).to include('Start the game!')
+      end
+
+      it 'Statistics button' do
+        expect(last_response.body).to include('role="button">Statistics')
+      end
+
+      it 'Rules button' do
+        expect(last_response.body).to include('role="button">Rules')
+      end
+    end
+  end
+
+  describe 'Scenarios' do
+    let(:response) { get '/' }
+    let(:path)     { File.expand_path('../lib/views/menu.html.erb', __dir__) }
+
+    before { response }
+
+    context 'when Game start:' do
+      it 'Choose difficulty, Input valid name, Click on' do
       end
     end
   end
