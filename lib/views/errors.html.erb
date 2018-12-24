@@ -14,20 +14,14 @@
   <section id="introduction">
     <div class="container">
       <div class="row fill-viewport align-items-center justify-content-center">
-        <div class="col-12 col-md-6">
-          <div class="col-md-auto">
-            <h3 class="text-white title"></h3>
-          </div>
           <!--<div id="error" class="modalbackground">-->
-          <div id="error" class="modalbackground">
-	            <div class="modalwindow">
+	            <div class="errors-info">
 		            <h3><%= @error_text[:head]%></h3>
 	              <h4><%= @error_text[:title]%></h4>
                 <p><%= @error_text[:body]%></p>
 		            <a href=<%= @error_text[:response_link] %>>OK</a>
               </div>
-	        </div>
-        </div>
+	        <!--</div>-->
       </div>
     </div>
   </section>

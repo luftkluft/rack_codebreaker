@@ -38,6 +38,7 @@ module Codebreaker
       sending_game_data = { player_name: @player_name, level: @level,
                             attempts: @attempts, hints: @hints }
       menu_render_way(@game_init.check_game_data(sending_game_data))
+      # menu_render_way({head: 'Head', title: 'Title', body: "Body",response_link: '/'})
     end
 
     def menu_render_way(check_result = '')

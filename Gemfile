@@ -20,4 +20,5 @@ end
 group :test do
   gem 'rack-test', require: 'rack/test'
   gem 'rspec', '~> 3.8'
+  gem 'simplecov', require: false, group: :test
 end
