@@ -13,6 +13,7 @@ module Codebreaker
       @request = Rack::Request.new(env)
       @game_init = GameInit.new
       @process = GameProcess.new
+      @rules = Rules.new
     end
 
     def response
@@ -20,7 +21,9 @@ module Codebreaker
       when '/' then index
       when '/submit_menu_button' then submit_menu_button
       when '/submit_hint_button' then submit_hint_button
+      when '/rules_button' then rules_button
       when '/update_game' then update_game
+      when '/submit_answer_button' then submit_answer_button
       else
         error404
       end
@@ -95,6 +98,15 @@ module Codebreaker
 
     def error404
       Rack::Response.new(render('error404.html.erb'))
+    end
+
+    def rules_button
+      @read_rules = @rules.load_rules
+      Rack::Response.new(render('rules.html.erb'))
+    end
+
+    def submit_answer_button
+      
     end
 
     def render(template)
