@@ -24,19 +24,19 @@
               <button type="button" class="btn btn-primary" disabled>
                 Level:
                 <span class="badge badge-light">
-                  Middle
+                  <%= @level %>
                 </span>
               </button>
               <button type="button" class="btn btn-primary" disabled>
                 Attempts Left:
                 <span class="badge badge-light">
-                  0/8
+                  <%= @attempts_left %>/<%= @attempts %>
                 </span>
               </button>
               <button type="button" class="btn btn-primary" disabled>
                 Hints Left:
                 <span class="badge badge-light">
-                  1/3
+                  <%= @hints_left %>/<%= @hints %>
                 </span>
               </button>
             </div>
@@ -46,7 +46,7 @@
             <div class="text-center">
               <div class="text-center">
                 <h3 class="text-white">
-                  Oops, NAME! You lose the game!
+                  Oops, <%= @player_name %>! You lose the game!
                 </h3>
                 <h4 class="text-white">
                   The code was
@@ -57,7 +57,7 @@
             </div>
           </div>
           <hr class="mb-4">
-          <a class="btn btn-primary btn-lg" href="#" role="button">
+          <a class="btn btn-primary btn-lg" href="/" role="button">
             Play again!
           </a>
           <a class="btn btn-success btn-lg float-right" href="#" role="button">

@@ -4,16 +4,22 @@ require 'codebreaker_web'
 require_relative 'autoload'
 
 module Codebreaker
+  WIN = '++++'.freeze
+  LOSE = 'lose'.freeze
   class Racker
     def self.call(env)
       new(env).response.finish
     end
 
     def initialize(env)
+      @answer = ''
+      @mark = []
+      @level = ''
       @request = Rack::Request.new(env)
       @game_init = GameInit.new
       @process = GameProcess.new
       @rules = Rules.new
+      @logics = GameLogics.new
     end
 
     def response
@@ -24,6 +30,8 @@ module Codebreaker
       when '/rules_button' then rules_button
       when '/update_game' then update_game
       when '/submit_answer_button' then submit_answer_button
+      when '/win' then win
+      when '/lose' then lose
       else
         error404
       end
@@ -91,7 +99,8 @@ module Codebreaker
     end
 
     def submit_hint_button
-      hints_count = @request.session[:hints_counter] -= 1
+      @request.session[:hints_counter] -= 1 if @request.session[:hints_counter].positive?
+      hints_count = @request.session[:hints_counter]
       hints_array = @request.session[:hints_array]
       show_message(@process.show_hint(hints_count, hints_array))
     end
@@ -106,7 +115,47 @@ module Codebreaker
     end
 
     def submit_answer_button
-      
+      attempts = @request.session[:attempts_counter] -= 1
+      secret_code = @request.session[:secret_code]
+      guess = @request.params['number']
+      @answer = @logics.answer(attempts, secret_code, guess)
+      return win if @answer == WIN
+
+      return lose if @answer == LOSE
+
+      paint_answer(@answer)
+      update_game
+    end
+
+    def paint_answer(answer)
+      (0..3).each do |index|
+        next @mark[index] = 'success' if answer[index] == '+'
+        next @mark[index] = 'primary' if answer[index] == '-'
+
+        answer[index] = 'x'
+        @mark[index] = 'danger'
+      end
+      answer
+    end
+
+    def win
+      summarizing
+      Rack::Response.new(render('win.html.erb'))
+    end
+
+    def lose
+      summarizing
+      Rack::Response.new(render('lose.html.erb'))
+    end
+
+    def summarizing
+      @player_name = @request.session[:player_name]
+      @level = @request.session[:level]
+      @attempts_left = @request.session[:attempts] - @request.session[:attempts_counter]
+      @attempts = @request.session[:attempts]
+      @hints_left = @request.session[:hints] - @request.session[:hints_counter]
+      @hints = @request.session[:hints]
+      @secret_code = @request.session[:secret_code]
     end
 
     def render(template)

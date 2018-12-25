@@ -24,19 +24,19 @@
               <button type="button" class="btn btn-primary" disabled>
                 Level:
                 <span class="badge badge-light">
-                  Middle
+                  <%= @level %>
                 </span>
               </button>
               <button type="button" class="btn btn-primary" disabled>
                 Attempts Left:
                 <span class="badge badge-light">
-                  3/8
+                  <%= @attempts_left %>/<%= @attempts %>
                 </span>
               </button>
               <button type="button" class="btn btn-primary" disabled>
                 Hints Left:
                 <span class="badge badge-light">
-                  1/3
+                  <%= @hints_left %>/<%= @hints %>
                 </span>
               </button>
             </div>
@@ -46,14 +46,14 @@
             <div class="text-center">
               <div class="text-center">
                 <h3 class="text-white">
-                  Congratulations, NAME! You won the game!
+                  Congratulations, <%= @player_name %>! You won the game!
                 </h3>
               </div>
               <img src="assets/images/won.gif" class="img-fluid" alt="You won the game!">
             </div>
           </div>
           <hr class="mb-4">
-          <a class="btn btn-primary btn-lg" href="#" role="button">
+          <a class="btn btn-primary btn-lg" href="/" role="button">
             Play again!
           </a>
           <a class="btn btn-success btn-lg float-right" href="#" role="button">
