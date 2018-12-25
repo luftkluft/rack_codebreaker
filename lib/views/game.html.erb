@@ -35,14 +35,14 @@
               <div class="col text-center button">
                 <button type="button" class="btn btn-primary" disabled>
                   Attempts:
-                  <span class="badge badge-light"><%= @attempts %></span>
+                  <span class="badge badge-light"><%= @attempts_count.to_s %></span>
                 </button>
               </div>
 
               <div class="col button">
-                <button type="button" class="btn btn-primary float-right">
+                <button type="button" class="btn btn-primary float-right" disabled>
                   Hints:
-                  <span class="badge badge-light"><%= @hints %></span>
+                  <span class="badge badge-light"><%= @hints_count.to_s %></span>
                 </button>
               </div>
             </div>
@@ -65,14 +65,8 @@
               <button type="submit" class="btn btn-primary btn-lg">
                 Submit
               </button>
-              <a class="btn btn-warning btn-lg float-right" role="button">
+              <a href= "/submit_hint_button" class="btn btn-warning btn-lg float-right" role="button">
                 Show hint!
-                <span class="badge badge-light">
-                  6
-                </span>
-                <span class="badge badge-light">
-                  3
-                </span>
               </a>
             </form>
           </div>

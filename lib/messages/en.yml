@@ -1,0 +1,24 @@
+en:
+  wrong_name: 'You have passed wrong name!'
+  wrong_guess: "You have passed wrong Guess!"
+  heve_no_hints: 'You have no hints!'
+  your_hint: 'Your hint is'
+  response_hint_to_game: '/update_game'
+  to_game: 'Go to game!'
+  goodbye: 'Goodbye!'
+  guess_params: '(length - 4 digits, each digit is a number in the range 1-6)'
+  name_range: "(min length - %{min} symbols, max length - %{max} symbols)"
+  unexpected_command: "You have passed unexpected command!\n\n"
+  leave_game: "Enter \'exit\' to leave the game."
+  string_range_error: 'The number of characters in the name is out of range!'
+  integer_range_error: 'Level selection number out of range!'
+  guess_format_error: 'Guess does not match the format!'
+  load_file_error: "Load file error: %{e.message}!"
+  failed_to_save_result: "Failed to save result: %{e.message}!"
+  statistics_not_found: 'Statistics not found. You can be the first!'
+  result_saved_successfully: 'Result saved successfully!'
+  result_win: '++++'
+  result_lose: 'lose'
+  wrong_class_error_message: 'Wrong class!'
+  empty_string_error_message: 'You try to send empty string!'
+  guess_is_empty: 'Guess is empty!'
