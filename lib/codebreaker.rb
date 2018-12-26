@@ -6,6 +6,7 @@ require_relative 'autoload'
 module Codebreaker
   WIN = '++++'.freeze
   LOSE = 'lose'.freeze
+  SCORE_DATABASE = './lib/data/score.yml'.freeze
   class Racker
     def self.call(env)
       new(env).response.finish
@@ -32,6 +33,7 @@ module Codebreaker
       when '/submit_answer_button' then submit_answer_button
       when '/win' then win
       when '/lose' then lose
+      when '/statistics' then statistics
       else
         error404
       end
@@ -51,21 +53,23 @@ module Codebreaker
       menu_render
     end
 
-    def setup_player_session
-      @request.session[:play_date] = Date.today
-      @request.session[:player_name] = @request.params['player_name']
-      @request.session[:level] = @request.params['level']
+    def setup_attempts_session
+      reset_data
+      @level = @request.params['level']
+      @request.session[:attempts] = @game_init.receive_attempts[@level.to_sym]
+      @request.session[:attempts_counter] = @request.session[:attempts]
     end
 
     def setup_hints_session
       @request.session[:hints] = @game_init.receive_hints[@level.to_sym]
       @request.session[:hints_counter] = @request.session[:hints]
+      @request.session[:hints_counter_trigger] = false
     end
 
-    def setup_attempts_session
-      @level = @request.params['level']
-      @request.session[:attempts] = @game_init.receive_attempts[@level.to_sym]
-      @request.session[:attempts_counter] = @request.session[:attempts]
+    def setup_player_session
+      @request.session[:play_date] = Date.today
+      @request.session[:player_name] = @request.params['player_name']
+      @request.session[:level] = @request.params['level']
     end
 
     def menu_render
@@ -101,6 +105,8 @@ module Codebreaker
     def submit_hint_button
       @request.session[:hints_counter] -= 1 if @request.session[:hints_counter].positive?
       hints_count = @request.session[:hints_counter]
+      hints_count -= 1 if @request.session[:hints_counter_trigger] == true
+      @request.session[:hints_counter_trigger] = true if @request.session[:hints_counter] <= 0
       hints_array = @request.session[:hints_array]
       show_message(@process.show_hint(hints_count, hints_array))
     end
@@ -139,12 +145,16 @@ module Codebreaker
     end
 
     def win
+      @request.session[:rsult] = WIN
       summarizing
+      save_result
       Rack::Response.new(render('win.html.erb'))
     end
 
     def lose
+      @request.session[:rsult] = LOSE
       summarizing
+      save_result
       Rack::Response.new(render('lose.html.erb'))
     end
 
@@ -156,6 +166,36 @@ module Codebreaker
       @hints_left = @request.session[:hints] - @request.session[:hints_counter]
       @hints = @request.session[:hints]
       @secret_code = @request.session[:secret_code]
+    end
+
+    def save_result
+      game = @process.zip_result(preparation_result)
+
+      File.open(SCORE_DATABASE, 'a') { |f| f.write(game.to_yaml) }
+    end
+
+    def preparation_result
+      { player_name: @request.session[:player_name],
+        level: @request.session[:level],
+        result: @request.session[:rsult],
+        attempts_left: @request.session[:attempts] - @request.session[:attempts_counter],
+        attempts: @request.session[:attempts],
+        hints_left: @request.session[:hints] - @request.session[:hints_counter],
+        hints: @request.session[:hints],
+        secret_code: @request.session[:secret_code],
+        date: Time.now.strftime('%d-%m-%Y %R') }
+    end
+
+    def statistics
+      file = File.open(SCORE_DATABASE)
+      results = YAML.load_stream(file)
+      @sorted_results = @process.raiting(results)
+      Rack::Response.new(render('statistics.html.erb'))
+    end
+
+    def reset_data
+      @request.session[:player_name] = nil
+      @request.session[:level] = nil
     end
 
     def render(template)

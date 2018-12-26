@@ -37,44 +37,25 @@
                 </tr>
               </thead>
               <tbody>
+              <% count = 0 %>
+              <% @sorted_results.each do |result| %>
+              <% next  if result.result == 'lose' || count >= 4 %>
+              <% count += 1 %>
                 <tr>
-                  <th scope="row">1</th>
-                  <td>Player 1</td>
-                  <td>Middle</td>
-                  <td>8/10</td>
-                  <td>3/3</td>
-                  <td>2018.12.04 - 17:00:01</td>
+                  <th scope="row"><%= count %></th>
+                  <td><%= result.player_name %></td>
+                  <td><%= result.level %></td>
+                  <td><%= result.attempts_left %>/<%= result.attempts %></td>
+                  <td><%= result.hints_left %>/<%= result.hints %></td>
+                  <td><%= result.date %></td>
                 </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td>Player 1</td>
-                  <td>Middle</td>
-                  <td>8/10</td>
-                  <td>3/3</td>
-                  <td>2018.12.04 - 17:00:01</td>
-                </tr>
-                <tr>
-                  <th scope="row">3</th>
-                  <td>Player 1</td>
-                  <td>Middle</td>
-                  <td>8/10</td>
-                  <td>3/3</td>
-                  <td>2018.12.04 - 17:00:01</td>
-                </tr>
-                <tr>
-                  <th scope="row">4</th>
-                  <td>Player 1</td>
-                  <td>Middle</td>
-                  <td>8/10</td>
-                  <td>3/3</td>
-                  <td>2018.12.04 - 17:00:01</td>
-                </tr>
+              <% end %>
               </tbody>
             </table>
           </div>
           <hr class="mb-4">
-          <a class="btn btn-primary btn-lg" href="#" role="button">
-            Home
+          <a class="btn btn-primary btn-lg" href="/" role="button">
+            Menu
           </a>
         </div>
        </div>
