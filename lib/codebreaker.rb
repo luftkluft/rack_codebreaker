@@ -187,7 +187,7 @@ module Codebreaker
     end
 
     def statistics
-      file = File.open(SCORE_DATABASE, 'r')
+      save_result unless file = File.open(SCORE_DATABASE, 'r')
       results = YAML.load_stream(file)
       @sorted_results = @process.raiting(results)
       Rack::Response.new(render('statistics.html.erb'))
