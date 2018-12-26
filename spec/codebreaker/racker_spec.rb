@@ -25,8 +25,12 @@ RSpec.describe Codebreaker::Racker do
         expect(last_response.body).to include('Codebreaker 2018')
       end
 
-      it 'Select with options `Difficulty`' do
-        expect(last_response.body).to include('Choose game level')
+      it 'Select ' do
+        expect(last_response.body).to include('<select class="custom-select" name="level" required="">')
+      end
+
+      it 'with options `Difficulty`' do
+        expect(last_response.body).to include(' <option value="">Choose game level...</option>')
       end
 
       it 'Input with `Name`' do
@@ -43,18 +47,6 @@ RSpec.describe Codebreaker::Racker do
 
       it 'Rules button' do
         expect(last_response.body).to include('role="button">Rules')
-      end
-    end
-  end
-
-  describe 'Scenarios' do
-    let(:response) { get '/' }
-    let(:path)     { File.expand_path('../lib/views/menu.html.erb', __dir__) }
-
-    before { response }
-
-    context 'when Game start:' do
-      it 'Choose difficulty, Input valid name, Click on' do
       end
     end
   end
