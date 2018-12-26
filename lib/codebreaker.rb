@@ -13,6 +13,7 @@ module Codebreaker
     end
 
     def initialize(env)
+      File.open(SCORE_DATABASE, 'a') { |f| f.write([].to_yaml) } unless File.exist?(SCORE_DATABASE)
       @answer = ''
       @mark = []
       @level = ''
@@ -187,7 +188,7 @@ module Codebreaker
     end
 
     def statistics
-      save_result unless file = File.open(SCORE_DATABASE, 'r')
+      file = File.open(SCORE_DATABASE, 'r')
       results = YAML.load_stream(file)
       @sorted_results = @process.raiting(results)
       Rack::Response.new(render('statistics.html.erb'))
