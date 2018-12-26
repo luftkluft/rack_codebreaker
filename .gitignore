@@ -6,6 +6,6 @@
 /pkg/
 /spec/reports/
 /tmp/
-lib/data/score.yml
+/lib/data/score.yml
 # rspec failure tracking
 .rspec_status

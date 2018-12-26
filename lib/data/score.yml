@@ -75,25 +75,3 @@
   hints: 1
   secret_code: '5345'
   date: 26-12-2018 06:26
----
-- !ruby/object:Result
-  player_name: Name
-  level: hard
-  result: lose
-  attempts_left: 5
-  attempts: 5
-  hints_left: 0
-  hints: 1
-  secret_code: '5455'
-  date: 26-12-2018 06:31
----
-- !ruby/object:Result
-  player_name: Last
-  level: simple
-  result: "++++"
-  attempts_left: 8
-  attempts: 15
-  hints_left: 0
-  hints: 2
-  secret_code: '3421'
-  date: 26-12-2018 06:38
