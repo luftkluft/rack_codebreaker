@@ -39,7 +39,7 @@
               <tbody>
               <% count = 0 %>
               <% @sorted_results.each do |result| %>
-              <% next  if result.result == 'lose' || count >= 4 %>
+              <% next  if result.result != '++++' || count >= 4 %>
               <% count += 1 %>
                 <tr>
                   <th scope="row"><%= count %></th>
