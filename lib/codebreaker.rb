@@ -55,7 +55,6 @@ module Codebreaker
     end
 
     def setup_attempts_session
-      reset_data
       @level = @request.params['level']
       @request.session[:attempts] = @game_init.receive_attempts[@level.to_sym]
       @request.session[:attempts_counter] = @request.session[:attempts]
@@ -68,7 +67,6 @@ module Codebreaker
     end
 
     def setup_player_session
-      @request.session[:play_date] = Date.today
       @request.session[:player_name] = @request.params['player_name']
       @request.session[:level] = @request.params['level']
     end
@@ -192,11 +190,6 @@ module Codebreaker
       results = YAML.load_stream(file)
       @sorted_results = @process.raiting(results)
       Rack::Response.new(render('statistics.html.erb'))
-    end
-
-    def reset_data
-      @request.session[:player_name] = nil
-      @request.session[:level] = nil
     end
 
     def render(template)
