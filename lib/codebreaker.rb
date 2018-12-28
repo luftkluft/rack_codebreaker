@@ -29,10 +29,7 @@ module Codebreaker
       when '/submit_menu_button' then submit_menu_button
       when '/submit_hint_button' then submit_hint_button
       when '/rules_button' then rules_button
-      when '/update_game' then update_game
       when '/submit_answer_button' then submit_answer_button
-      when '/win' then win
-      when '/lose' then lose
       when '/statistics' then statistics
       else
         error404

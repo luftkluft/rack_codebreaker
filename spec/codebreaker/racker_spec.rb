@@ -126,8 +126,9 @@ RSpec.describe Codebreaker::Racker do
     it 'click with win case and redirect on win page' do
       get '/'
       post '/submit_menu_button', player_name: 'Name', level: 'hard'
+      last_request.session[:secret_code]
       post '/submit_answer_button', number: last_request.session[:secret_code]
-      expect(last_response.body).to include('Congratulations, Name!')
+      expect(last_response.body).to include('Name! You won the game!')
     end
 
     it 'click with lose case and redirect on lose page' do
