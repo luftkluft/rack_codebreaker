@@ -37,19 +37,33 @@
                 </tr>
               </thead>
               <tbody>
-              <% count = 0 %>
-              <% @sorted_results.each do |result| %>
-              <% next  if result.result != '++++' || count >= 4 %>
-              <% count += 1 %>
+                <% count = 0 %>
+                <% @sorted_results.each do |result| %>
+                <% next  if result.result != '++++' || count >= 4 %>
+                <% count += 1 %>
                 <tr>
-                  <th scope="row"><%= count %></th>
-                  <td><%= result.player_name %></td>
-                  <td><%= result.level %></td>
-                  <td><%= result.attempts_left %>/<%= result.attempts %></td>
-                  <td><%= result.hints_left %>/<%= result.hints %></td>
-                  <td><%= result.date %></td>
+                  <th scope="row">
+                    <%= count %>
+                  </th>
+                  <td>
+                    <%= result.player_name %>
+                  </td>
+                  <td>
+                    <%= result.level %>
+                  </td>
+                  <td>
+                    <%= result.attempts_left %>/
+                    <%= result.attempts %>
+                  </td>
+                  <td>
+                    <%= result.hints_left %>/
+                    <%= result.hints %>
+                  </td>
+                  <td>
+                    <%= result.date %>
+                  </td>
                 </tr>
-              <% end %>
+                <% end %>
               </tbody>
             </table>
           </div>
@@ -58,7 +72,8 @@
             Menu
           </a>
         </div>
-       </div>
-    </section>
-  </body>
+      </div>
+  </section>
+</body>
+
 </html>

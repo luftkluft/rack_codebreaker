@@ -30,13 +30,15 @@
               <button type="button" class="btn btn-primary" disabled>
                 Attempts Left:
                 <span class="badge badge-light">
-                  <%= @attempts_left %>/<%= @attempts %>
+                  <%= @attempts_left %>/
+                  <%= @attempts %>
                 </span>
               </button>
               <button type="button" class="btn btn-primary" disabled>
                 Hints Left:
                 <span class="badge badge-light">
-                  <%= @hints_left %>/<%= @hints %>
+                  <%= @hints_left %>/
+                  <%= @hints %>
                 </span>
               </button>
             </div>
@@ -46,11 +48,13 @@
             <div class="text-center">
               <div class="text-center">
                 <h3 class="text-white">
-                  Oops, <%= @player_name %>! You lose the game!
+                  Oops,
+                  <%= @player_name %>! You lose the game!
                 </h3>
                 <h4 class="text-white">
                   The code was
-                  <strong><%= @secret_code %></strong>
+                  <strong>
+                    <%= @secret_code %></strong>
                 </h4>
               </div>
               <img src="assets/images/lost.gif" class="img-fluid" alt="You lose the game!">
@@ -64,7 +68,8 @@
             Statistics
           </a>
         </div>
-       </div>
-    </section>
-  </body>
+      </div>
+  </section>
+</body>
+
 </html>

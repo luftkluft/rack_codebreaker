@@ -30,13 +30,15 @@
               <button type="button" class="btn btn-primary" disabled>
                 Attempts Left:
                 <span class="badge badge-light">
-                  <%= @attempts_left %>/<%= @attempts %>
+                  <%= @attempts_left %>/
+                  <%= @attempts %>
                 </span>
               </button>
               <button type="button" class="btn btn-primary" disabled>
                 Hints Left:
                 <span class="badge badge-light">
-                  <%= @hints_left %>/<%= @hints %>
+                  <%= @hints_left %>/
+                  <%= @hints %>
                 </span>
               </button>
             </div>
@@ -46,7 +48,8 @@
             <div class="text-center">
               <div class="text-center">
                 <h3 class="text-white">
-                  Congratulations, <%= @player_name %>! You won the game!
+                  Congratulations,
+                  <%= @player_name %>! You won the game!
                 </h3>
               </div>
               <img src="assets/images/won.gif" class="img-fluid" alt="You won the game!">
@@ -60,7 +63,8 @@
             Statistics
           </a>
         </div>
-       </div>
-    </section>
-  </body>
+      </div>
+  </section>
+</body>
+
 </html>
