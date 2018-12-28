@@ -72,8 +72,8 @@ module Codebreaker
 
     def menu_render
       check_result = @game_init.check_game_data(validated_data)
-      return update_game if check_result == ''
-
+      return update_game if check_result.empty?
+ 
       @messages_text = check_result
       Rack::Response.new(render('messages.html.erb'))
     end
