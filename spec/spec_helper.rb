@@ -1,7 +1,7 @@
 require_relative '../lib/autoload'
 SimpleCov.start do
   add_filter '/spec/'
-  # minimum_coverage 95
+  minimum_coverage 95
 end
 
 HISTORY_DATABASE = './lib/data/history.yml'.freeze

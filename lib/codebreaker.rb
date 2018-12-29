@@ -1,11 +1,6 @@
 require_relative 'autoload'
 
 module Codebreaker
-  WIN = '++++'.freeze
-  LOSE = 'lose'.freeze
-  SCORE_DATABASE = './lib/data/score.yml'.freeze
-  HISTORY_DATABASE = './lib/data/history.yml'.freeze
-  NUMBER_OF_DIJITS = 4
   class Racker
     def self.call(env)
       new(env).response.finish
@@ -91,11 +86,10 @@ module Codebreaker
       @level = @request.session[:level]
       @attempts_count = @request.session[:attempts_counter]
       @request.session[:hints_counter]
-      puts '@@@hints_count@@'
-p      @request.session[:hints_count] = @request.session[:hints_counter]
-p      @request.session[:hints_count] = 0 if @request.session[:hints_counter] <= 0
+      @request.session[:hints_count] = @request.session[:hints_counter]
+      @request.session[:hints_count] = 0 if @request.session[:hints_counter] <= 0
       @opened_hints = @request.session[:opened_hints]
-p      @hints_count = @request.session[:hints_count]
+      @hints_count = @request.session[:hints_count]
       Rack::Response.new(render('game.html.erb'))
     end
 
@@ -106,9 +100,8 @@ p      @hints_count = @request.session[:hints_count]
     end
 
     def submit_hint_button
-    puts 'WWWWWWWWWWsubmit_hint_button'
-p      @request.session[:hints_counter] -= 1
-p      hints_count_to_lib = @request.session[:hints_counter]
+      @request.session[:hints_counter] -= 1
+      hints_count_to_lib = @request.session[:hints_counter]
       hints_array = @request.session[:hints_array]
       show_message(@process.show_hint(hints_count_to_lib, hints_array))
     end
@@ -166,10 +159,9 @@ p      hints_count_to_lib = @request.session[:hints_counter]
       @level = @request.session[:level]
       @attempts_left = @request.session[:attempts] - @request.session[:attempts_counter]
       @attempts = @request.session[:attempts]
-      puts '!!!!!!!!!!!!!!!!!!'
-p      @request.session[:hints_count]
-p      @hints_left = @request.session[:hints] - @request.session[:hints_count]
-p      @hints = @request.session[:hints]
+      @request.session[:hints_count]
+      @hints_left = @request.session[:hints] - @request.session[:hints_count]
+      @hints = @request.session[:hints]
       @secret_code = @request.session[:secret_code]
     end
 
