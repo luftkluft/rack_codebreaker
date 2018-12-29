@@ -1,77 +1,93 @@
 <!DOCTYPE html>
 <html lang="en" class="mdl-js">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="assets/favicon.ico" rel="icon">
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/css/styles.css" rel="stylesheet">
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-    <title>Codebreaker Web</title>
-  <body>
-    <section id="introduction">
-      <div class="container">
-        <div class="row fill-viewport align-items-center justify-content-center">
-          <div class="col-12 col-md-6">
-            <div class="row">
-              <div class="col-md-auto">
-                <h1 class="text-white title">Codebreaker 2018</h1>
-              </div>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="assets/favicon.ico" rel="icon">
+<link href="assets/css/bootstrap.min.css" rel="stylesheet">
+<link href="assets/css/styles.css" rel="stylesheet">
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<title>Codebreaker Web</title>
+
+<body>
+  <section id="introduction">
+    <div class="container">
+      <div class="row fill-viewport align-items-center justify-content-center">
+        <div class="col-12 col-md-6">
+          <div class="row">
+            <div class="col-md-auto">
+              <h1 class="text-white title">Codebreaker 2018</h1>
             </div>
-            <p class="lead text-white-70">
-              Hello, <%= @player_name %>!
-              Try to guess 4-digit number, that consists of numbers in a range from 1 to 6.
-            </p>
-            <hr class="mb-4">
-            <div class="row">
-              <div class="col button">
-                <button type="button" class="btn btn-primary" disabled>
-                  Level:
-                  <span class="badge badge-light">
-                    <%= @level %>
-                  </span>
-                </button>
-              </div>
-              <div class="col text-center button">
-                <button type="button" class="btn btn-primary" disabled>
-                  Attempts:
-                  <span class="badge badge-light"><%= @attempts_count.to_s %></span>
-                </button>
-              </div>
-
-              <div class="col button">
-                <button type="button" class="btn btn-primary float-right" disabled>
-                  Hints:
-                  <span class="badge badge-light"><%= @hints_count.to_s %></span>
-                </button>
-              </div>
-            </div>
-            <hr class="mb-4">
-
-            <form method="post" action="/submit_answer_button">
-              <div class="form-group">
-                <input class="form-control guess_input" name="number" pattern="^[1-6]{4}$" placeholder="****" required="" autocomplete="off">
-              </div>
-              <div class="form-group guess_markers_list">
-                <div id="guess_marker">
-                  <button type="button" class="btn btn-<%= @mark[0] %> marks" disabled><%= @answer[0] %></button>
-                  <button type="button" class="btn btn-<%= @mark[1] %> marks" disabled><%= @answer[1] %></button>
-                  <button type="button" class="btn btn-<%= @mark[2] %> marks" disabled><%= @answer[2] %></button>
-                  <button type="button" class="btn btn-<%= @mark[3] %> marks" disabled><%= @answer[3] %></button>
-                </div>
-              </div>
-              <hr class="mb-4">
-
-              <button type="submit" class="btn btn-primary btn-lg">
-                Submit
-              </button>
-              <a href= "/submit_hint_button" class="btn btn-warning btn-lg float-right" role="button">
-                Show hint!
-              </a>
-            </form>
           </div>
+          <p class="lead text-white-70">
+            Hello,
+            <%= @player_name %>!
+            Try to guess 4-digit number, that consists of numbers in a range from 1 to 6.
+          </p>
+          <hr class="mb-4">
+          <div class="row">
+            <div class="col button">
+              <button type="button" class="btn btn-primary" disabled>
+                Level:
+                <span class="badge badge-light">
+                  <%= @level %>
+                </span>
+              </button>
+            </div>
+            <div class="col text-center button">
+              <button type="button" class="btn btn-primary" disabled>
+                Attempts:
+                <span class="badge badge-light">
+                  <%= @attempts_count.to_s %></span>
+              </button>
+            </div>
+
+            <div class="col button">
+              <button type="button" class="btn btn-primary float-right" disabled>
+                Hints:
+                <span class="badge badge-light">
+                  <%= @hints_count.to_s %></span>
+              </button>
+            </div>
+          </div>
+          <hr class="mb-4">
+
+          <form method="post" action="/submit_answer_button">
+            <div class="form-group">
+              <input class="form-control guess_input" name="number" pattern="^[1-6]{4}$" placeholder="****" required=""
+                autocomplete="off">
+            </div>
+            <div class="form-group guess_markers_list">
+              <div id="guess_marker">
+                <button type="button" class="btn btn-<%= @mark[0] %> marks" disabled>
+                  <%= @answer[0] %></button>
+                <button type="button" class="btn btn-<%= @mark[1] %> marks" disabled>
+                  <%= @answer[1] %></button>
+                <button type="button" class="btn btn-<%= @mark[2] %> marks" disabled>
+                  <%= @answer[2] %></button>
+                <button type="button" class="btn btn-<%= @mark[3] %> marks" disabled>
+                  <%= @answer[3] %></button>
+              </div>
+            </div>
+            <hr class="mb-4">
+
+            <button type="submit" class="btn btn-primary btn-lg">
+              Submit
+            </button>
+            <a href="/submit_hint_button" class="btn btn-warning btn-lg float-right" role="button">
+              Show hint!
+              <% @opened_hints.each do |hint| %>
+              <% next if hint.nil? %>
+              <span class="badge badge-light">
+                <%= hint %>
+              </span>
+              <% end %>
+            </a>
+          </form>
         </div>
-       </div>
-    </section>
-  </body>
+      </div>
+    </div>
+  </section>
+</body>
+
 </html>
