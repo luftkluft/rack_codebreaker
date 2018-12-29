@@ -1,14 +1,14 @@
 GIT
   remote: https://github.com/luftkluft/codebreaker_web
-  revision: 48a132c8bd0439e617dab46dc85a3fa9a892f123
+  revision: 84efc4645ab6bb177eb548b3fece266ebdc0156b
   branch: develop
   specs:
-    codebreaker_web (0.5.8)
+    codebreaker_web (0.6.0)
 
 PATH
   remote: .
   specs:
-    codebreaker (0.1.0)
+    codebreaker (0.2.0)
 
 GEM
   remote: https://rubygems.org/

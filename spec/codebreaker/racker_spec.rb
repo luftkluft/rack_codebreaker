@@ -1,11 +1,13 @@
 RSpec.describe Codebreaker::Racker do
   before do
-    stub_const('Codebreaker::Storage::PATH', 'lib/data/test.yml')
+    stub_const('Codebreaker::Storage::PATH', TEST_PATH)
     File.open(Codebreaker::Storage::PATH, 'w')
   end
 
   after do
-    File.delete('lib/data/test.yml')
+    File.delete(TEST_PATH)
+    File.delete(HISTORY_DATABASE) if File.exist?(HISTORY_DATABASE)
+    File.delete(SCORE_DATABASE) if File.exist?(SCORE_DATABASE)
   end
 
   describe 'vesion number' do
@@ -20,11 +22,12 @@ RSpec.describe Codebreaker::Racker do
   end
 
   describe 'Home page' do
-    before { File.delete(HISTORY_DATABASE) }
+    # before { File.delete(HISTORY_DATABASE) if File.exist?(HISTORY_DATABASE) }
+    # after { File.delete(HISTORY_DATABASE) if File.exist?(HISTORY_DATABASE) }
 
     context 'with I see:' do
       let(:response) { get '/' }
-      let(:path)     { File.expand_path('../lib/views/menu.html.erb', __dir__) }
+      let(:path)     { File.expand_path(I18n.t('to_menu_path'), __dir__) }
 
       before { response }
 
@@ -33,31 +36,31 @@ RSpec.describe Codebreaker::Racker do
       end
 
       it 'Introduction message `Codebreaker 2018`' do
-        expect(last_response.body).to include('Codebreaker 2018')
+        expect(last_response.body).to include(I18n.t('codebreaker_title'))
       end
 
       it 'Select ' do
-        expect(last_response.body).to include('<select class="custom-select" name="level"')
+        expect(last_response.body).to include(I18n.t('select_code'))
       end
 
       it 'with options `Difficulty`' do
-        expect(last_response.body).to include(' <option value="">Choose game level...</option>')
+        expect(last_response.body).to include(I18n.t('game_level_title'))
       end
 
       it 'Input with `Name`' do
-        expect(last_response.body).to include('placeholder="Your name"')
+        expect(last_response.body).to include(I18n.t('input_name'))
       end
 
       it 'Submit button with `Start the game!` text' do
-        expect(last_response.body).to include('Start the game!')
+        expect(last_response.body).to include(I18n.t('start_button'))
       end
 
       it 'Statistics button' do
-        expect(last_response.body).to include('role="button">Statistics')
+        expect(last_response.body).to include(I18n.t('statistics_button'))
       end
 
       it 'Rules button' do
-        expect(last_response.body).to include('role="button">Rules')
+        expect(last_response.body).to include(I18n.t('rules_button'))
       end
     end
 
@@ -65,7 +68,7 @@ RSpec.describe Codebreaker::Racker do
       before { get '/rules_button' }
 
       it { expect(last_response).to be_ok }
-      it { expect(last_response.body).to include('= GAME RULES =') }
+      it { expect(last_response.body).to include(I18n.t('game_rules_title')) }
     end
 
     context 'with Statictics page' do
@@ -81,19 +84,19 @@ RSpec.describe Codebreaker::Racker do
     context 'with 404 page' do
       before { get '/unknown' }
 
-      it { expect(last_response.body).to include('Page not found.') }
+      it { expect(last_response.body).to include(I18n.t('page_not_found')) }
     end
   end
 
   describe 'Menu submit button click with true params' do
     before do
       get '/'
-      post '/submit_menu_button', player_name: 'Name', level: 'hard'
+      post '/submit_menu_button', player_name: TEST_NAME, level: TEST_LEVEL
     end
 
     context 'with setup_player_session' do
-      it { expect(last_request.session[:player_name]).to eq('Name') }
-      it { expect(last_request.session[:level]).to eq('hard') }
+      it { expect(last_request.session[:player_name]).to eq(I18n.t('test_name')) }
+      it { expect(last_request.session[:level]).to eq(I18n.t('test_level')) }
     end
 
     context 'with setuped hints' do
@@ -110,56 +113,51 @@ RSpec.describe Codebreaker::Racker do
       end
 
       it 'contains a greeting' do
-        expect(last_response.body).to include('Hello')
-        expect(last_response.body).to include('Name!')
+        expect(last_response.body).to include(I18n.t('hello_text'))
+        expect(last_response.body).to include(I18n.t('test_name'))
       end
     end
   end
 
   describe 'Answer submit button click' do
-    it 'click with number `1234` with decrease attempts counter' do
+    before do
       get '/'
-      post '/submit_menu_button', player_name: 'Name', level: 'hard'
-      post '/submit_answer_button', number: '1234'
-      expect(last_request.session[:attempts_counter]).to be 4
-      expect(last_response.body).to include 'Try to guess 4-digit number'
+      post '/submit_menu_button', player_name: TEST_NAME, level: TEST_LEVEL
+    end
+
+    it 'click with number `1234` decrease attempts counter' do
+      post '/submit_answer_button', number: TEST_NUMBER
+      expect(last_request.session[:attempts_counter]).to be NUMBER_OF_DIJITS
+      expect(last_response.body).to include I18n.t('shot_rules')
       expect(last_response).to be_ok
     end
 
     it 'click with win case and redirect on win page' do
-      get '/'
-      post '/submit_menu_button', player_name: 'Name', level: 'hard'
       last_request.session[:secret_code]
       post '/submit_answer_button', number: last_request.session[:secret_code]
       expect(last_response.body).to include('Name! You won the game!')
     end
 
     it 'click with lose case and redirect on lose page' do
-      get '/'
-      post '/submit_menu_button', player_name: 'Name', level: 'hard'
-      post '/submit_answer_button', number: '1234'
-      post '/submit_answer_button', number: '1234'
-      post '/submit_answer_button', number: '1234'
-      post '/submit_answer_button', number: '1234'
-      post '/submit_answer_button', number: '1234'
+      5.times { |_i| post '/submit_answer_button', number: TEST_NUMBER }
       expect(last_response.body).to include('You lose the game!')
     end
   end
 
   describe 'Hint submit button click ' do
-    it 'with decrease hints counter' do
+    before do
       get '/'
-      post '/submit_menu_button', player_name: 'Name', level: 'hard'
+      post '/submit_menu_button', player_name: TEST_NAME, level: TEST_LEVEL
+    end
+
+    it 'with decrease hints counter' do
       expect(last_request.session[:hints_counter]).to be 1
       post '/submit_hint_button'
       expect(last_request.session[:hints_counter]).to be 0
     end
 
     it 'with exceeding the hints' do
-      get '/'
-      post '/submit_menu_button', player_name: 'Name', level: 'hard'
-      post '/submit_hint_button'
-      post '/submit_hint_button'
+      2.times { |_i| post '/submit_hint_button' }
       expect(last_response.body).to include('You have no hints!')
     end
   end

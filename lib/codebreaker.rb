@@ -231,7 +231,9 @@ module Codebreaker
 
     def show_message(message)
       @messages_text = message
-      @request.session[:opened_hints] << @messages_text[:title] if @messages_text[:head] == I18n.t('your_hint')
+      if @messages_text[:head] == I18n.t('your_hint')
+        @request.session[:opened_hints] << @messages_text[:title]
+      end
       write_history
       Rack::Response.new(render('messages.html.erb'))
     end

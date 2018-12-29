@@ -17,3 +17,17 @@ en:
   result_lose: 'lose'
   wrong_class_error_message: 'Wrong class!'
   empty_string_error_message: 'You try to send empty string!'
+  to_menu_path: '../lib/views/menu.html.erb'
+  codebreaker_title: 'Codebreaker 2018'
+  select_code: "<select class=\"custom-select\" name=\"level\""
+  game_level_title: 'Choose game level...'
+  input_name: "placeholder=\"Your name\""
+  start_button: 'Start the game!'
+  statistics_button: "role=\"button\">Statistics"
+  rules_button: "role=\"button\">Rules"
+  game_rules_title: '= GAME RULES ='
+  page_not_found: 'Page not found.'
+  test_name: 'Name'
+  test_level: 'hard'
+  hello_text: 'Hello'
+  shot_rules: 'Try to guess 4-digit number'
