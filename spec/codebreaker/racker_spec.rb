@@ -20,6 +20,8 @@ RSpec.describe Codebreaker::Racker do
   end
 
   describe 'Home page' do
+    before { File.delete(HISTORY_DATABASE) }
+
     context 'with I see:' do
       let(:response) { get '/' }
       let(:path)     { File.expand_path('../lib/views/menu.html.erb', __dir__) }
@@ -108,7 +110,8 @@ RSpec.describe Codebreaker::Racker do
       end
 
       it 'contains a greeting' do
-        expect(last_response.body).to include('Hello, Name!')
+        expect(last_response.body).to include('Hello')
+        expect(last_response.body).to include('Name!')
       end
     end
   end

@@ -10,6 +10,8 @@ require 'bundler/setup'
 require 'codebreaker'
 require 'rack/test'
 
+HISTORY_DATABASE = './lib/data/history.yml'.freeze
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'

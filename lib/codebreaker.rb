@@ -94,11 +94,8 @@ module Codebreaker
       @level = @request.session[:level]
       @attempts_count = @request.session[:attempts_counter]
       @request.session[:hints_counter]
-      @hints_count = if @request.session[:hints_counter].negative?
-                       0
-                     else
-                       @request.session[:hints_counter]
-                     end
+      @hints_count = @request.session[:hints_counter]
+      @hints_count = 0 if @request.session[:hints_counter].negative?
       @opened_hints = @request.session[:opened_hints]
       Rack::Response.new(render('game.html.erb'))
     end
@@ -110,10 +107,8 @@ module Codebreaker
     end
 
     def submit_hint_button
-      @request.session[:hints_counter] -= 1 if @request.session[:hints_counter].positive?
+      @request.session[:hints_counter] -= 1
       hints_count = @request.session[:hints_counter]
-      hints_count -= 1 if @request.session[:hints_counter_trigger] == true
-      @request.session[:hints_counter_trigger] = true if @request.session[:hints_counter] <= 0
       hints_array = @request.session[:hints_array]
       show_message(@process.show_hint(hints_count, hints_array))
     end

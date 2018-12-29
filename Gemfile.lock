@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/luftkluft/codebreaker_web
-  revision: 6b6c8aee5ea942f60b74aff05b7b12589b4d0770
+  revision: 48a132c8bd0439e617dab46dc85a3fa9a892f123
   branch: develop
   specs:
-    codebreaker_web (0.5.4)
+    codebreaker_web (0.5.8)
 
 PATH
   remote: .
