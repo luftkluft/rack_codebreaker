@@ -41,7 +41,6 @@ module Codebreaker
 
     def submit_menu_button
       unless File.exist?(HISTORY_DATABASE)
-        @request.session[:game] = true
         setup_attempts_session
         setup_hints_session
         setup_player_session
