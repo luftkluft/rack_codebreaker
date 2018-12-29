@@ -1,14 +1,8 @@
-require 'simplecov'
-require 'rubocop-rspec'
-
+require_relative '../lib/autoload'
 SimpleCov.start do
   add_filter '/spec/'
   # minimum_coverage 95
 end
-
-require 'bundler/setup'
-require 'codebreaker'
-require 'rack/test'
 
 HISTORY_DATABASE = './lib/data/history.yml'.freeze
 

@@ -1,6 +1,3 @@
-require_relative 'codebreaker/version'
-require 'erb'
-require 'codebreaker_web'
 require_relative 'autoload'
 
 module Codebreaker
@@ -68,7 +65,7 @@ module Codebreaker
     def setup_hints_session
       @request.session[:hints] = @game_init.receive_hints[@level.to_sym]
       @request.session[:hints_counter] = @request.session[:hints]
-      @request.session[:hints_counter_trigger] = false
+      @request.session[:hints_count] = @request.session[:hints]
       @request.session[:opened_hints] = []
     end
 
@@ -94,9 +91,11 @@ module Codebreaker
       @level = @request.session[:level]
       @attempts_count = @request.session[:attempts_counter]
       @request.session[:hints_counter]
-      @hints_count = @request.session[:hints_counter]
-      @hints_count = 0 if @request.session[:hints_counter].negative?
+      puts '@@@hints_count@@'
+p      @request.session[:hints_count] = @request.session[:hints_counter]
+p      @request.session[:hints_count] = 0 if @request.session[:hints_counter] <= 0
       @opened_hints = @request.session[:opened_hints]
+p      @hints_count = @request.session[:hints_count]
       Rack::Response.new(render('game.html.erb'))
     end
 
@@ -107,10 +106,11 @@ module Codebreaker
     end
 
     def submit_hint_button
-      @request.session[:hints_counter] -= 1
-      hints_count = @request.session[:hints_counter]
+    puts 'WWWWWWWWWWsubmit_hint_button'
+p      @request.session[:hints_counter] -= 1
+p      hints_count_to_lib = @request.session[:hints_counter]
       hints_array = @request.session[:hints_array]
-      show_message(@process.show_hint(hints_count, hints_array))
+      show_message(@process.show_hint(hints_count_to_lib, hints_array))
     end
 
     def error404
@@ -166,8 +166,10 @@ module Codebreaker
       @level = @request.session[:level]
       @attempts_left = @request.session[:attempts] - @request.session[:attempts_counter]
       @attempts = @request.session[:attempts]
-      @hints_left = @request.session[:hints] - @request.session[:hints_counter]
-      @hints = @request.session[:hints]
+      puts '!!!!!!!!!!!!!!!!!!'
+p      @request.session[:hints_count]
+p      @hints_left = @request.session[:hints] - @request.session[:hints_count]
+p      @hints = @request.session[:hints]
       @secret_code = @request.session[:secret_code]
     end
 
@@ -179,7 +181,8 @@ module Codebreaker
         hints_counter: @request.session[:hints_counter],
         hints: @request.session[:hints],
         secret_code: @request.session[:secret_code],
-        opened_hints: @request.session[:opened_hints] }
+        opened_hints: @request.session[:opened_hints],
+        hints_count: @request.session[:hints_count] }
     end
 
     def save_result
@@ -217,6 +220,7 @@ module Codebreaker
       @request.session[:hints_counter] = game[0][:hints_counter]
       @request.session[:secret_code] = game[0][:secret_code]
       @request.session[:opened_hints] = game[0][:opened_hints]
+      @request.session[:hints_count] = game[0][:hints_count]
       update_game
     end
 
