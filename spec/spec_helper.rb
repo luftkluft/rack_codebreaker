@@ -3,6 +3,7 @@ SimpleCov.start do
   add_filter '/spec/'
   minimum_coverage 90
 end
+
 require 'rubocop-rspec'
 require 'bundler/setup'
 require 'codebreaker'
