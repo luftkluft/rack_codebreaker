@@ -24,7 +24,7 @@ en:
   input_name: "placeholder=\"Your name\""
   start_button: 'Start the game!'
   statistics_button: "role=\"button\">Statistics"
-  rules_button: "role=\"button\">Rules"
+  read_rules: "role=\"button\">Rules"
   game_rules_title: '= GAME RULES ='
   page_not_found: 'Page not found.'
   test_name: 'Name'

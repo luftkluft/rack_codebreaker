@@ -60,12 +60,12 @@ RSpec.describe Codebreaker::Racker do
       end
 
       it 'Rules button' do
-        expect(last_response.body).to include(I18n.t('rules_button'))
+        expect(last_response.body).to include(I18n.t('read_rules'))
       end
     end
 
     context 'with Rules page' do
-      before { get '/rules_button' }
+      before { get '/read_rules' }
 
       it { expect(last_response).to be_ok }
       it { expect(last_response.body).to include(I18n.t('game_rules_title')) }
@@ -91,7 +91,7 @@ RSpec.describe Codebreaker::Racker do
   describe 'Menu submit button click with true params' do
     before do
       get '/'
-      post '/submit_menu_button', player_name: TEST_NAME, level: TEST_LEVEL
+      post '/start_game', player_name: TEST_NAME, level: TEST_LEVEL
     end
 
     context 'with setup_player_session' do
@@ -122,11 +122,11 @@ RSpec.describe Codebreaker::Racker do
   describe 'Answer submit button click' do
     before do
       get '/'
-      post '/submit_menu_button', player_name: TEST_NAME, level: TEST_LEVEL
+      post '/start_game', player_name: TEST_NAME, level: TEST_LEVEL
     end
 
     it 'click with number `1234` decrease attempts counter' do
-      post '/submit_answer_button', number: TEST_NUMBER
+      post '/start_round', number: TEST_NUMBER
       expect(last_request.session[:attempts_counter]).to be NUMBER_OF_DIJITS
       expect(last_response.body).to include I18n.t('shot_rules')
       expect(last_response).to be_ok
@@ -134,12 +134,12 @@ RSpec.describe Codebreaker::Racker do
 
     it 'click with win case and redirect on win page' do
       last_request.session[:secret_code]
-      post '/submit_answer_button', number: last_request.session[:secret_code]
+      post '/start_round', number: last_request.session[:secret_code]
       expect(last_response.body).to include('Name! You won the game!')
     end
 
     it 'click with lose case and redirect on lose page' do
-      5.times { |_i| post '/submit_answer_button', number: TEST_NUMBER }
+      5.times { |_i| post '/start_round', number: TEST_NUMBER }
       expect(last_response.body).to include('You lose the game!')
     end
   end
@@ -147,17 +147,17 @@ RSpec.describe Codebreaker::Racker do
   describe 'Hint submit button click ' do
     before do
       get '/'
-      post '/submit_menu_button', player_name: TEST_NAME, level: TEST_LEVEL
+      post '/start_game', player_name: TEST_NAME, level: TEST_LEVEL
     end
 
     it 'with decrease hints counter' do
       expect(last_request.session[:hints_counter]).to be 1
-      post '/submit_hint_button'
+      post '/take_hint'
       expect(last_request.session[:hints_counter]).to be 0
     end
 
     it 'with exceeding the hints' do
-      2.times { |_i| post '/submit_hint_button' }
+      2.times { |_i| post '/take_hint' }
       expect(last_response.body).to include('You have no hints!')
     end
   end

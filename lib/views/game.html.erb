@@ -52,7 +52,7 @@
           </div>
           <hr class="mb-4">
 
-          <form method="post" action="/submit_answer_button">
+          <form method="post" action="/start_round">
             <div class="form-group">
               <input class="form-control guess_input" name="number" pattern="^[1-6]{4}$" placeholder="****" required=""
                 autocomplete="off">
@@ -74,7 +74,7 @@
             <button type="submit" class="btn btn-primary btn-lg">
               Submit
             </button>
-            <a href="/submit_hint_button" class="btn btn-warning btn-lg float-right" role="button">
+            <a href="/take_hint" class="btn btn-warning btn-lg float-right" role="button">
               Show hint!
               <% @opened_hints.each do |hint| %>
               <% next if hint.nil? %>

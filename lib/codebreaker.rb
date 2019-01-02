@@ -9,8 +9,6 @@ module Codebreaker
     def initialize(env)
       @answer = ''
       @mark = []
-      @level = ''
-      @opened_hints = []
       @request = Rack::Request.new(env)
       @game_init = GameInit.new
       @process = GameProcess.new
@@ -21,10 +19,10 @@ module Codebreaker
     def response
       case @request.path
       when '/' then index
-      when '/submit_menu_button' then submit_menu_button
-      when '/submit_hint_button' then submit_hint_button
-      when '/rules_button' then rules_button
-      when '/submit_answer_button' then submit_answer_button
+      when '/start_game' then start_game
+      when '/take_hint' then take_hint
+      when '/read_rules' then read_rules
+      when '/start_round' then start_round
       when '/statistics' then statistics
       else
         error404
@@ -36,17 +34,17 @@ module Codebreaker
     def index
       return Rack::Response.new(render('menu.html.erb')) unless File.exist?(HISTORY_DATABASE)
 
-      read_history
+      read_status
     end
 
-    def submit_menu_button
+    def start_game
       unless File.exist?(HISTORY_DATABASE)
         setup_attempts_session
         setup_hints_session
         setup_player_session
         setup_secret_data
       end
-      write_history
+      write_status
       menu_render
     end
 
@@ -98,7 +96,7 @@ module Codebreaker
       @request.session[:hints_array] = secret_data[:hints_array]
     end
 
-    def submit_hint_button
+    def take_hint
       @request.session[:hints_counter] -= 1
       hints_count_to_lib = @request.session[:hints_counter]
       hints_array = @request.session[:hints_array]
@@ -109,12 +107,12 @@ module Codebreaker
       Rack::Response.new(render('error404.html.erb'))
     end
 
-    def rules_button
+    def read_rules
       @read_rules = @rules.load_rules
       Rack::Response.new(render('rules.html.erb'))
     end
 
-    def submit_answer_button
+    def start_round
       attempts = @request.session[:attempts_counter] -= 1
       secret_code = @request.session[:secret_code]
       guess = @request.params['number']
@@ -124,7 +122,7 @@ module Codebreaker
       return lose if @answer == LOSE
 
       paint_answer(@answer)
-      write_history
+      write_status
       update_game
     end
 
@@ -164,43 +162,41 @@ module Codebreaker
       @secret_code = @request.session[:secret_code]
     end
 
-    def preparation_hystory
+    def preparation_common_data
       { player_name: @request.session[:player_name],
         level: @request.session[:level],
-        attempts_counter: @request.session[:attempts_counter],
         attempts: @request.session[:attempts],
-        hints_counter: @request.session[:hints_counter],
         hints: @request.session[:hints],
-        secret_code: @request.session[:secret_code],
+        secret_code: @request.session[:secret_code] }
+    end
+
+    def preparation_hystory
+      { attempts_counter: @request.session[:attempts_counter],
+        hints_counter: @request.session[:hints_counter],
         opened_hints: @request.session[:opened_hints],
         hints_count: @request.session[:hints_count] }
     end
 
-    def save_result
-      game = @process.zip_result(preparation_result)
-
-      File.open(SCORE_DATABASE, 'a') { |f| f.write(game.to_yaml) }
-      File.delete(HISTORY_DATABASE)
-      @request.session[:game] = false
-    end
-
     def preparation_result
-      { player_name: @request.session[:player_name],
-        level: @request.session[:level],
-        result: @request.session[:rsult],
+      { result: @request.session[:rsult],
         attempts_left: @request.session[:attempts] - @request.session[:attempts_counter],
-        attempts: @request.session[:attempts],
         hints_left: @request.session[:hints] - @request.session[:hints_counter],
-        hints: @request.session[:hints],
-        secret_code: @request.session[:secret_code],
         date: Time.now.strftime('%d-%m-%Y %R') }
     end
 
-    def write_history
-      File.open(HISTORY_DATABASE, 'w') { |f| f.write(preparation_hystory.to_yaml) }
+    def save_result
+      result = [*preparation_common_data, *preparation_result].to_h
+      game = @process.zip_result(result)
+      File.open(SCORE_DATABASE, 'a') { |f| f.write(game.to_yaml) }
+      File.delete(HISTORY_DATABASE)
     end
 
-    def read_history
+    def write_status
+      history = [*preparation_common_data, *preparation_hystory].to_h
+      File.open(HISTORY_DATABASE, 'w') { |f| f.write(history.to_yaml) }
+    end
+
+    def read_status
       game = YAML.load_stream(File.open(HISTORY_DATABASE, 'r'))
       game[0][:player_name]
       @request.session[:player_name] = game[0][:player_name]
@@ -233,7 +229,7 @@ module Codebreaker
       if @messages_text[:head] == I18n.t('your_hint')
         @request.session[:opened_hints] << @messages_text[:title]
       end
-      write_history
+      write_status
       Rack::Response.new(render('messages.html.erb'))
     end
   end
