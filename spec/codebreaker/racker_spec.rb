@@ -6,7 +6,6 @@ RSpec.describe Codebreaker::Racker do
 
   after do
     File.delete(TEST_PATH)
-    File.delete(HISTORY_DATABASE) if File.exist?(HISTORY_DATABASE)
     File.delete(SCORE_DATABASE) if File.exist?(SCORE_DATABASE)
   end
 
@@ -22,9 +21,6 @@ RSpec.describe Codebreaker::Racker do
   end
 
   describe 'Home page' do
-    # before { File.delete(HISTORY_DATABASE) if File.exist?(HISTORY_DATABASE) }
-    # after { File.delete(HISTORY_DATABASE) if File.exist?(HISTORY_DATABASE) }
-
     context 'with I see:' do
       let(:response) { get '/' }
       let(:path)     { File.expand_path(I18n.t('to_menu_path'), __dir__) }
