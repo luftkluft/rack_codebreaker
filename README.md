@@ -6,4 +6,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Running application is located at https://rackcodebreaker.herokuapp.com/.
 
-## Gem is located at https://github.com/luftkluft/codebreaker_web/tree/develop.
+## Gem is located at https://github.com/luftkluft/c_codebreaker/tree/develop.
