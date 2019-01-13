@@ -67,15 +67,15 @@ RSpec.describe Codebreaker::Racker do
       it { expect(last_response.body).to include(I18n.t('game_rules_title')) }
     end
 
-    # xcontext 'with Statictics page' do
-    #   before do
-    #     allow(Codebreaker::Storage).to receive_message_chain(:stats, :empty?)
-    #     allow(Codebreaker::Storage).to receive_message_chain(:stats, :each_with_index)
-    #     get '/statistics'
-    #   end
+    context 'with Statictics page' do
+      before do
+        allow(Codebreaker::Storage).to receive_message_chain(:stats, :empty?)
+        allow(Codebreaker::Storage).to receive_message_chain(:stats, :each_with_index)
+        get '/statistics'
+      end
 
-    #   it { expect(last_response).to be_ok }
-    # end
+      it { expect(last_response).to be_ok }
+    end
 
     context 'with 404 page' do
       before { get '/unknown' }

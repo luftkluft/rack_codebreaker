@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/luftkluft/c_codebreaker
-  revision: c9c56af671dfa9aab9700fcc735d7793367ad30b
+  revision: 9ec53381d8e6fcf0794172bf684e50c688f667ed
   branch: develop
   specs:
-    c_codebreaker (1.8.2)
+    c_codebreaker (1.8.3)
 
 PATH
   remote: .
