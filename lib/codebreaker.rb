@@ -1,4 +1,4 @@
-require 'codebreaker_web'
+require 'c_codebreaker'
 
 module Codebreaker
   class Racker
@@ -10,10 +10,8 @@ module Codebreaker
       @answer = ''
       @mark = []
       @request = Rack::Request.new(env)
-      @game_init = GameInit.new
-      @process = GameProcess.new
-      @rules = Rules.new
-      @logics = GameLogics.new
+      @gate = Interface.new
+      @gate.setup_web_mode
     end
 
     def response
@@ -33,49 +31,40 @@ module Codebreaker
     def index
       return Rack::Response.new(render('menu.html.erb')) unless @request.session[:game]
 
-      update_game
+      update_status
     end
 
     def start_game
       @request.session[:game] = true
-      setup_attempts_session
-      setup_hints_session
-      setup_player_session
-      setup_secret_data
-      menu_render
+      setup_data = @gate.start(@request.params['player_name'], @request.params['level'])
+      @request.session[:setup_data] = setup_data
+      @request.session[:player_name] = setup_data[:name]
+      @request.session[:level] = setup_data[:level]
+      setup_attempts_session(setup_data)
+      setup_hints_session(setup_data)
+      setup_secret_data(setup_data)
+      update_status
     end
 
-    def setup_attempts_session
-      @level = @request.params['level']
-      @request.session[:attempts] = @game_init.receive_attempts[@level.to_sym]
-      @request.session[:attempts_counter] = @request.session[:attempts]
+    def setup_attempts_session(setup_data)
+      @request.session[:attempts] = setup_data[:attempts]
+      @request.session[:attempts_counter] = setup_data[:attempts]
     end
 
-    def setup_hints_session
-      @request.session[:hints] = @game_init.receive_hints[@level.to_sym]
-      @request.session[:hints_counter] = @request.session[:hints]
-      @request.session[:hints_count] = @request.session[:hints]
+    def setup_hints_session(setup_data)
+      @request.session[:hints] = setup_data[:hints]
+      @request.session[:hints_counter] = setup_data[:hints]
+      @request.session[:hints_count] = setup_data[:hints]
+      @request.session[:hints_array] = setup_data[:hints_array]
       @request.session[:opened_hints] = []
     end
 
-    def setup_player_session
-      @request.session[:player_name] = @request.params['player_name']
-      @request.session[:level] = @request.params['level']
+    def setup_secret_data(setup_data)
+      @request.session[:secret_code] = setup_data[:code_array].join
+      @request.session[:code_array] = setup_data[:code_array]
     end
 
-    def menu_render
-      check_result = @game_init.check_game_data(validated_data)
-      return update_game if check_result.empty?
-
-      @messages_text = check_result
-      Rack::Response.new(render('messages.html.erb'))
-    end
-
-    def validated_data
-      { player_name: @request.session[:player_name] }
-    end
-
-    def update_game
+    def update_status
       @player_name = @request.session[:player_name]
       @level = @request.session[:level]
       @attempts_count = @request.session[:attempts_counter]
@@ -86,17 +75,17 @@ module Codebreaker
       Rack::Response.new(render('game.html.erb'))
     end
 
-    def setup_secret_data
-      secret_data = @process.create_secret_data
-      @request.session[:secret_code] = secret_data[:secret_code]
-      @request.session[:hints_array] = secret_data[:hints_array]
+    def take_hint
+      hint = @gate.game_process('hint', update_data)
+      write_hint_to_session(hint)
+      show_message(hint)
     end
 
-    def take_hint
+    def write_hint_to_session(hint)
+      return unless @request.session[:hints_counter].positive?
+
       @request.session[:hints_counter] -= 1
-      hints_count_to_lib = @request.session[:hints_counter]
-      hints_array = @request.session[:hints_array]
-      show_message(@process.show_hint(hints_count_to_lib, hints_array))
+      @request.session[:opened_hints] << hint
     end
 
     def error404
@@ -104,21 +93,34 @@ module Codebreaker
     end
 
     def read_rules
-      @read_rules = @rules.load_rules
+      @read_rules = @gate.rules
       Rack::Response.new(render('rules.html.erb'))
     end
 
     def start_round
-      attempts = @request.session[:attempts_counter] -= 1
-      secret_code = @request.session[:secret_code]
-      guess = @request.params['number']
-      @answer = @logics.answer(attempts, secret_code, guess)
-      return win if @answer == WIN
+      @request.session[:attempts_counter] -= 1
+      answer_route(@gate.game_process(@request.params['number'], update_data))
+    end
 
-      return lose if @answer == LOSE
+    def update_data
+      { name: @request.session[:player_name],
+        level: @request.session[:level],
+        code_array: @request.session[:code_array],
+        hints_array: @request.session[:hints_array],
+        attempts: @request.session[:attempts_counter] }
+    end
 
-      paint_answer(@answer)
-      update_game
+    def answer_route(answer)
+      if answer.is_a?(Hash) && answer.size == 7
+        win(answer)
+      elsif answer.is_a?(Hash) && answer.size == 8
+        lose(answer)
+      elsif answer.include?('+') || answer.include?('-') || answer.empty?
+        @answer = paint_answer(answer)
+        update_status
+      else
+        show_message(answer)
+      end
     end
 
     def paint_answer(answer)
@@ -132,55 +134,31 @@ module Codebreaker
       answer
     end
 
-    def win
-      @request.session[:rsult] = WIN
-      summarizing
-      save_result
+    def win(answer)
+      @level = answer[:difficulty]
+      @attempts_left = answer[:attempts_used]
+      @attempts = answer[:all_attempts]
+      @hints_left = answer[:hints_used]
+      @hints = answer[:all_hints]
+      @player_name = answer[:name]
       @request.session.clear
       Rack::Response.new(render('win.html.erb'))
     end
 
-    def lose
-      @request.session[:rsult] = LOSE
-      summarizing
-      save_result
+    def lose(answer)
+      @level = answer[:difficulty]
+      @attempts_left = answer[:attempts_used]
+      @attempts = answer[:all_attempts]
+      @hints_left = answer[:hints_used]
+      @hints = answer[:all_hints]
+      @player_name = answer[:name]
+      @secret_code = answer[:code]
       @request.session.clear
       Rack::Response.new(render('lose.html.erb'))
     end
 
-    def summarizing
-      @player_name = @request.session[:player_name]
-      @level = @request.session[:level]
-      @attempts_left = @request.session[:attempts] - @request.session[:attempts_counter]
-      @attempts = @request.session[:attempts]
-      @request.session[:hints_count]
-      @hints_left = @request.session[:hints] - @request.session[:hints_count]
-      @hints = @request.session[:hints]
-      @secret_code = @request.session[:secret_code]
-    end
-
-    def result
-      { player_name: @request.session[:player_name],
-        level: @request.session[:level],
-        result: @request.session[:rsult],
-        attempts: @request.session[:attempts],
-        attempts_left: @request.session[:attempts] - @request.session[:attempts_counter],
-        hints: @request.session[:hints],
-        hints_left: @request.session[:hints] - @request.session[:hints_counter],
-        secret_code: @request.session[:secret_code],
-        date: Time.now.strftime('%d-%m-%Y %R') }
-    end
-
-    def save_result
-      game = @process.zip_result(result)
-      File.open(SCORE_DATABASE, 'a') { |f| f.write(game.to_yaml) }
-    end
-
     def statistics
-      File.open(SCORE_DATABASE, 'a') { |f| f.write([].to_yaml) } unless File.exist?(SCORE_DATABASE)
-      file = File.open(SCORE_DATABASE, 'r')
-      results = YAML.load_stream(file)
-      @sorted_results = @process.raiting(results)
+      @sorted_results = @gate.stats
       Rack::Response.new(render('statistics.html.erb'))
     end
 
@@ -190,11 +168,21 @@ module Codebreaker
     end
 
     def show_message(message)
-      @messages_text = message
-      if @messages_text[:head] == I18n.t('your_hint')
-        @request.session[:opened_hints] << @messages_text[:title]
-      end
+      @messages_text = message_wrapper(message)
       Rack::Response.new(render('messages.html.erb'))
+    end
+
+    def message_wrapper(message)
+      if message.is_a?(Integer)
+        { head: '', title: YOUR_HINT_IS, body: message,
+          response_link: TO_HOME, button_text: BUTTON_TEXT_TO_GAME }
+      elsif message.include?('no hints')
+        { head: '', title: HAVE_NO_HINTS, body: '',
+          response_link: TO_HOME, button_text: BUTTON_TEXT_TO_GAME }
+      else
+        { head: '', title:  UNKNOWN_MESSAGE, body: message,
+          response_link: TO_HOME, button_text: OOPS }
+      end
     end
   end
 end

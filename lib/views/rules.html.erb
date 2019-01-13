@@ -16,15 +16,13 @@
 <body>
   <section id="introduction">
     <div class="container">
-      <% @read_rules.each do |line|%>
-      <h5 class="text-white title">
-        <%= line %>
-      </h5>
-      <% end %>
-    </div>
-    <div class="errors-info">
-      <a href='/'>Go to menu</a>
-    </div>
+      <div class="row fill-viewport align-items-center justify-content-center">
+        <div class="col-12 col-md-12">
+          <div class="errors-info">
+            <%= @read_rules %>
+            <a href='/'>Go to menu</a>
+          </div>
+        </div>
   </section>
 </body>
 

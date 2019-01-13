@@ -4,8 +4,8 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
 gemspec
 
-gem 'codebreaker_web',
-    git: 'https://github.com/luftkluft/codebreaker_web',
+gem 'c_codebreaker',
+    git: 'https://github.com/luftkluft/c_codebreaker',
     branch: 'develop'
 
 gem 'i18n'
@@ -13,6 +13,7 @@ gem 'rack'
 
 group :development do
   gem 'fasterer'
+  gem 'pry'
   gem 'rubocop'
   gem 'rubocop-rspec'
 end

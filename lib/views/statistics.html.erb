@@ -39,28 +39,28 @@
               <tbody>
                 <% count = 0 %>
                 <% @sorted_results.each do |result| %>
-                <% next  if result.result != '++++' || count >= 4 %>
+                <% next  if count >= 4 %>
                 <% count += 1 %>
                 <tr>
                   <th scope="row">
                     <%= count %>
                   </th>
                   <td>
-                    <%= result.player_name %>
+                    <%= result[:name] %>
                   </td>
                   <td>
-                    <%= result.level %>
+                    <%= result[:difficulty] %>
                   </td>
                   <td>
-                    <%= result.attempts_left %>/
-                    <%= result.attempts %>
+                    <%= result[:attempts_used] %>/
+                    <%= result[:all_attempts] %>
                   </td>
                   <td>
-                    <%= result.hints_left %>/
-                    <%= result.hints %>
+                    <%= result[:hints_used] %>/
+                    <%= result[:all_hints] %>
                   </td>
                   <td>
-                    <%= result.date %>
+                    <%= result[:date] %>
                   </td>
                 </tr>
                 <% end %>
