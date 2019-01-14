@@ -123,7 +123,7 @@ RSpec.describe Codebreaker::Racker do
 
     it 'click with number `1234` decrease attempts counter' do
       post '/start_round', number: TEST_NUMBER
-      expect(last_request.session[:attempts_counter]).to be NUMBER_OF_DIJITS
+      expect(last_request.session[:attempts_counter]).to be Game::DIGITS_COUNT
       expect(last_response.body).to include I18n.t('shot_rules')
       expect(last_response).to be_ok
     end
