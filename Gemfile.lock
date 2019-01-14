@@ -1,14 +1,14 @@
 GIT
   remote: https://github.com/luftkluft/c_codebreaker
-  revision: 9ec53381d8e6fcf0794172bf684e50c688f667ed
+  revision: ea9490003373f9697d77292c9cb579c8b152f86e
   branch: develop
   specs:
-    c_codebreaker (1.8.3)
+    c_codebreaker (1.8.4)
 
 PATH
   remote: .
   specs:
-    codebreaker (1.0.0)
+    codebreaker (1.0.1)
 
 GEM
   remote: https://rubygems.org/
@@ -22,7 +22,7 @@ GEM
     fasterer (0.4.1)
       colorize (~> 0.7)
       ruby_parser (~> 3.11.0)
-    i18n (1.5.1)
+    i18n (1.5.2)
       concurrent-ruby (~> 1.0)
     jaro_winkler (1.5.2)
     json (2.1.0)
