@@ -124,7 +124,7 @@ module Codebreaker
     end
 
     def paint_answer(answer)
-      NUMBER_OF_DIJITS.times do |index|
+      Game::DIGITS_COUNT.times do |index|
         next @mark[index] = 'success' if answer[index] == '+'
         next @mark[index] = 'primary' if answer[index] == '-'
 
