@@ -11,7 +11,6 @@ module Codebreaker
       @mark = []
       @request = Rack::Request.new(env)
       @gate = Interface.new
-      @gate.setup_web_mode
     end
 
     def response
