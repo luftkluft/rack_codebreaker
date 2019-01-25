@@ -36,7 +36,6 @@ module Codebreaker
     def start_game
       @request.session[:game] = true
       setup_data = @gate.start(@request.params['player_name'], @request.params['level'])
-      @request.session[:setup_data] = setup_data
       @request.session[:player_name] = setup_data[:name]
       @request.session[:level] = setup_data[:level]
       setup_attempts_session(setup_data)
@@ -76,7 +75,7 @@ module Codebreaker
 
     def take_hint
       hint = @gate.game_process('hint', update_data)
-      write_hint_to_session(hint)
+      write_hint_to_session(hint.chars.last.to_i)
       show_message(hint)
     end
 
@@ -172,16 +171,8 @@ module Codebreaker
     end
 
     def message_wrapper(message)
-      if message.is_a?(Integer)
-        { head: '', title: YOUR_HINT_IS, body: message,
-          response_link: TO_HOME, button_text: BUTTON_TEXT_TO_GAME }
-      elsif message.include?('no hints')
-        { head: '', title: HAVE_NO_HINTS, body: '',
-          response_link: TO_HOME, button_text: BUTTON_TEXT_TO_GAME }
-      else
-        { head: '', title:  UNKNOWN_MESSAGE, body: message,
-          response_link: TO_HOME, button_text: OOPS }
-      end
+      { head: '', title: '', body: message,
+        response_link: TO_HOME, button_text: BUTTON_TEXT_TO_GAME }
     end
   end
 end

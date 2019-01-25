@@ -48,6 +48,5 @@ en:
   test_level: "hell"
   hello_text: " Hello,"
   shot_rules: "Try to guess 4-digit number"
-
-  you_hints: "{head: '', title: 'Your hint is:', body: %{message}, response_link: '/', button_text: 'To Game!'}"
-
+  lose_game_text: 'You lose the game!'
+  won_game_text: 'Name! You won the game!'

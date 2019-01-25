@@ -131,12 +131,12 @@ RSpec.describe Codebreaker::Racker do
     it 'click with win case and redirect on win page' do
       last_request.session[:secret_code]
       post '/start_round', number: last_request.session[:secret_code]
-      expect(last_response.body).to include('Name! You won the game!')
+      expect(last_response.body).to include(I18n.t('won_game_text'))
     end
 
     it 'click with lose case and redirect on lose page' do
       5.times { |_i| post '/start_round', number: TEST_NUMBER }
-      expect(last_response.body).to include('You lose the game!')
+      expect(last_response.body).to include(I18n.t('lose_game_text'))
     end
   end
 
@@ -154,7 +154,7 @@ RSpec.describe Codebreaker::Racker do
 
     it 'with exceeding the hints' do
       2.times { |_i| post '/take_hint' }
-      expect(last_response.body).to include('You have no hints!')
+      expect(last_response.body).to include(I18n.t('have_no_hints_message'))
     end
   end
 end
