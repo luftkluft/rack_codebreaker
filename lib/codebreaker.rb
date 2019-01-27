@@ -7,7 +7,7 @@ module Codebreaker
     end
 
     def initialize(env)
-      @answer = ''
+      @answer = []
       @mark = []
       @request = Rack::Request.new(env)
       @gate = Interface.new
@@ -34,55 +34,33 @@ module Codebreaker
     end
 
     def start_game
-      @request.session[:game] = true
-      setup_data = @gate.start(@request.params['player_name'], @request.params['level'])
-      @request.session[:player_name] = setup_data[:name]
-      @request.session[:level] = setup_data[:level]
-      setup_attempts_session(setup_data)
-      setup_hints_session(setup_data)
-      setup_secret_data(setup_data)
+      @request.session[:game] = @gate.start(@request.params['player_name'],
+                                            @request.params['level'])
+      @game = @request.session[:game]
+      @request.session[:attempts_counter] = @game[:attempts]
+      @request.session[:opened_hints] = []
       update_status
     end
 
-    def setup_attempts_session(setup_data)
-      @request.session[:attempts] = setup_data[:attempts]
-      @request.session[:attempts_counter] = setup_data[:attempts]
-    end
-
-    def setup_hints_session(setup_data)
-      @request.session[:hints] = setup_data[:hints]
-      @request.session[:hints_counter] = setup_data[:hints]
-      @request.session[:hints_count] = setup_data[:hints]
-      @request.session[:hints_array] = setup_data[:hints_array]
-      @request.session[:opened_hints] = []
-    end
-
-    def setup_secret_data(setup_data)
-      @request.session[:secret_code] = setup_data[:code_array].join
-      @request.session[:code_array] = setup_data[:code_array]
-    end
-
     def update_status
-      @player_name = @request.session[:player_name]
-      @level = @request.session[:level]
-      @attempts_count = @request.session[:attempts_counter]
-      @request.session[:hints_count] = @request.session[:hints_counter]
-      @request.session[:hints_count] = 0 if @request.session[:hints_counter] <= 0
+      @game = @request.session[:game]
+      @player_name = @game[:name]
+      @level = @game[:level]
+      @attempts_count = @game[:attempts]
+      @hints_count = @game[:hints_array].size
       @opened_hints = @request.session[:opened_hints]
-      @hints_count = @request.session[:hints_count]
       Rack::Response.new(render('game.html.erb'))
     end
 
     def take_hint
-      hint = @gate.game_process('hint', update_data)
+      hint = @gate.game_process(Game::HINT_COMMAND, update_data)
       write_hint_to_session(hint.chars.last.to_i)
       show_message(hint)
     end
 
     def write_hint_to_session(hint)
-      return unless @request.session[:hints_counter].positive?
+      return if hint.zero?
 
-      @request.session[:hints_counter] -= 1
       @request.session[:opened_hints] << hint
     end
 
@@ -96,16 +74,19 @@ module Codebreaker
     end
 
     def start_round
-      @request.session[:attempts_counter] -= 1
+      @game = @request.session[:game]
+      @game[:attempts] -= 1
       answer_route(@gate.game_process(@request.params['number'], update_data))
     end
 
     def update_data
-      { name: @request.session[:player_name],
-        level: @request.session[:level],
-        code_array: @request.session[:code_array],
-        hints_array: @request.session[:hints_array],
-        attempts: @request.session[:attempts_counter] }
+      @game = @request.session[:game]
+      { name: @game[:name],
+        level: @game[:level],
+        code_array: @game[:code_array],
+        hints_array: @game[:hints_array],
+        attempts: @game[:attempts],
+        difficulty: @game[:difficulty] }
     end
 
     def answer_route(answer)
@@ -114,7 +95,8 @@ module Codebreaker
       elsif answer.is_a?(Hash) && answer.size == 8
         lose(answer)
       elsif answer.include?('+') || answer.include?('-') || answer.empty?
-        @answer = paint_answer(answer)
+        @answer = paint_answer(answer)[:answer]
+        @mark = paint_answer(answer)[:mark]
         update_status
       else
         show_message(answer)
@@ -122,14 +104,7 @@ module Codebreaker
     end
 
     def paint_answer(answer)
-      Game::DIGITS_COUNT.times do |index|
-        next @mark[index] = 'success' if answer[index] == '+'
-        next @mark[index] = 'primary' if answer[index] == '-'
-
-        answer[index] = 'x'
-        @mark[index] = 'danger'
-      end
-      answer
+      @gate.paint_answer(answer)
     end
 
     def win(answer)

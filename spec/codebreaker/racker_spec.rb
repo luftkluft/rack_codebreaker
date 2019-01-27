@@ -91,16 +91,8 @@ RSpec.describe Codebreaker::Racker do
     end
 
     context 'with setup_player_session' do
-      it { expect(last_request.session[:player_name]).to eq(I18n.t('test_name')) }
-      it { expect(last_request.session[:level]).to eq(I18n.t('test_level')) }
-    end
-
-    context 'with setuped hints' do
-      it { expect(last_request.session[:hints]).to be 1 }
-    end
-
-    context 'with setuped hints_counter' do
-      it { expect(last_request.session[:hints_counter]).to be 1 }
+      it { expect(last_request.session[:game][:name]).to eq(I18n.t('test_name')) }
+      it { expect(last_request.session[:game][:level]).to eq(I18n.t('test_level')) }
     end
 
     context 'with game page' do
@@ -121,16 +113,9 @@ RSpec.describe Codebreaker::Racker do
       post '/start_game', player_name: TEST_NAME, level: TEST_LEVEL
     end
 
-    it 'click with number `1234` decrease attempts counter' do
-      post '/start_round', number: TEST_NUMBER
-      expect(last_request.session[:attempts_counter]).to be Game::DIGITS_COUNT
-      expect(last_response.body).to include I18n.t('shot_rules')
-      expect(last_response).to be_ok
-    end
-
     it 'click with win case and redirect on win page' do
       last_request.session[:secret_code]
-      post '/start_round', number: last_request.session[:secret_code]
+      post '/start_round', number: last_request.session[:game][:code_array].join
       expect(last_response.body).to include(I18n.t('won_game_text'))
     end
 
@@ -144,12 +129,6 @@ RSpec.describe Codebreaker::Racker do
     before do
       get '/'
       post '/start_game', player_name: TEST_NAME, level: TEST_LEVEL
-    end
-
-    it 'with decrease hints counter' do
-      expect(last_request.session[:hints_counter]).to be 1
-      post '/take_hint'
-      expect(last_request.session[:hints_counter]).to be 0
     end
 
     it 'with exceeding the hints' do
