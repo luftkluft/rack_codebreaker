@@ -59,6 +59,7 @@
             </div>
             <div class="form-group guess_markers_list">
               <div id="guess_marker">
+                <% if @answer && @mark %>
                 <button type="button" class="btn btn-<%= @mark[0] %> marks" disabled>
                   <%= @answer[0] %></button>
                 <button type="button" class="btn btn-<%= @mark[1] %> marks" disabled>
@@ -67,6 +68,7 @@
                   <%= @answer[2] %></button>
                 <button type="button" class="btn btn-<%= @mark[3] %> marks" disabled>
                   <%= @answer[3] %></button>
+                <% end %>
               </div>
             </div>
             <hr class="mb-4">

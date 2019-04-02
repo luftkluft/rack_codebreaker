@@ -7,8 +7,6 @@ module Codebreaker
     end
 
     def initialize(env)
-      @answer = []
-      @mark = []
       @request = Rack::Request.new(env)
       @gate = Interface.new
     end

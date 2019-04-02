@@ -17,6 +17,7 @@
     <div class="container">
       <div class="row fill-viewport align-items-center justify-content-center">
         <div class="errors-info">
+          <% if @messages_text %>
           <h3>
             <%= @messages_text[:head]%>
           </h3>
@@ -28,6 +29,7 @@
           </h5>
           <a href=<%=@messages_text[:response_link] %>>
             <%= @messages_text[:button_text]%></a>
+          <% end %>
         </div>
       </div>
     </div>
