@@ -10,7 +10,7 @@
     "yarn": ">= 0.25.2"
   },
   "dependencies": {
-    "bootstrap": "3.3.7",
+    "bootstrap": "3.4.1",
     "jquery": "1.9.1",
     "popper.js": "^1.14.6"
   }
