@@ -1,0 +1,17 @@
+{
+  "name": "rack_codebreaker",
+  "version": "0.1.0",
+  "description": "logic_game",
+  "main": "index.js",
+  "repository": "https://github.com/luftkluft/rack_codebreaker",
+  "author": "https://luftkluft.github.io/",
+  "license": "MIT",
+  "engines": {
+    "yarn": ">= 0.25.2"
+  },
+  "dependencies": {
+    "bootstrap": "3.3.7",
+    "jquery": "1.9.1",
+    "popper.js": "^1.14.6"
+  }
+}
